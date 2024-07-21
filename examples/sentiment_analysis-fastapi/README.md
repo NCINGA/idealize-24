@@ -28,7 +28,7 @@ This repository contains a simple sentiment analysis API built with FastAPI and 
 3. **Install the required libraries:**
 
    ```bash
-   pip install fastapi uvicorn transformers
+   pip install fastapi uvicorn transformers torch
    ```
 
 ## Running the API
