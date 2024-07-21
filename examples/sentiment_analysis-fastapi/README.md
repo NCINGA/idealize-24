@@ -15,7 +15,7 @@ This repository contains a simple sentiment analysis API built with FastAPI and 
 
    ```bash
    git clone https://github.com/NCINGA/idealize-24.git
-   cd examples/sentiment_analysis-fastapi
+   cd idealize-24/examples/sentiment_analysis-fastapi
    ```
 
 2. **Create a virtual environment and activate it:**
