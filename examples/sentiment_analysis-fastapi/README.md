@@ -87,25 +87,40 @@ curl -X POST "http://127.0.0.1:8000/analyze_sentiment" -H "Content-Type: applica
    ```
 5. Send the request and observe the response.
 
-## Code Explanation
 
-The `main.py` file contains the FastAPI application and the endpoint for sentiment analysis.
+### Code Breakdown and Explanation
 
 ```python
 from fastapi import FastAPI
 from pydantic import BaseModel
 from transformers import pipeline
+import uvicorn
+```
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.
+- **BaseModel**: A class from `pydantic` library which is used for data validation and settings management using Python type annotations.
+- **pipeline**: Function from the `transformers` library, used to create a pipeline for various tasks including sentiment analysis.
+- **uvicorn**: An ASGI web server implementation for Python, used to run FastAPI applications.
 
+```python
 # Initialize the sentiment analysis pipeline
-sentiment_analyzer = pipeline('sentiment-analysis')
+sentiment_analyzer = pipeline("sentiment-analysis")
+```
+- This line initializes a sentiment analysis pipeline. This uses models from the `transformers` library capable of analyzing the sentiment of text and classifying it as positive, negative, or neutral.
 
+```python
 # Define the request body structure
 class TextRequest(BaseModel):
     text: str
+```
+- `TextRequest`: A Pydantic model that defines the expected structure of the request body. In this case, it expects a single field `text` which should be of type string.
 
+```python
 # Create the FastAPI app
 app = FastAPI()
+```
+- Creates an instance of `FastAPI`. This object provides all the functionalities of FastAPI like creating routes, handling requests etc.
 
+```python
 @app.post("/analyze_sentiment")
 def analyze_sentiment(request: TextRequest):
     # Get the text from the request
@@ -115,17 +130,19 @@ def analyze_sentiment(request: TextRequest):
     result = sentiment_analyzer(text)[0]
 
     # Return the result
-    return {
-        "label": result['label'],
-        "score": result['score']
-    }
+    return {"label": result["label"], "score": result["score"]}
+```
+- `@app.post("/analyze_sentiment")`: A route decorator that tells FastAPI that this function is responsible for handling POST requests to the `/analyze_sentiment` URL path.
+- `analyze_sentiment(request: TextRequest)`: The function that gets called when there is a POST request to `/analyze_sentiment`. It expects a request body matching the `TextRequest` model.
+- Inside the function, `text = request.text` extracts the text from the request.
+- `sentiment_analyzer(text)[0]` performs the sentiment analysis on the provided text. The `pipeline` returns a list of results, and `[0]` is used to get the first result.
+- Finally, the function returns a JSON object with the sentiment label and its associated confidence score.
 
+```python
 if __name__ == "__main__":
-    import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
 ```
+- Runs the app on the local development server using `uvicorn` with the specified host, port, and log level.
 
-- **Initialization**: The sentiment analysis pipeline from Hugging Face Transformers is initialized.
-- **TextRequest Model**: Defines the structure of the incoming request using Pydantic.
-- **FastAPI App**: The FastAPI app is created, and an endpoint `/analyze_sentiment` is defined.
-- **Endpoint Function**: This function takes a text input, performs sentiment analysis using the pipeline, and returns the result.
+### Overall Functionality
+This script sets up a basic API server that can receive text over HTTP and respond with sentiment analysis results. This is useful for applications needing to determine the sentiment of user-submitted text dynamically.
